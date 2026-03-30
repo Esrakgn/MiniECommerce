@@ -14,6 +14,7 @@ MiniECommerce is a learning-focused backend project built with ASP.NET Core Web 
 - Product listing, creation, and detail endpoints
 - Pagination
 - Basic error handling
+- 
 
 ## Project Structure
 
