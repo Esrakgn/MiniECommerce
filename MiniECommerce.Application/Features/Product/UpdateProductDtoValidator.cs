@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FluentValidation;
+﻿using FluentValidation;
 using MiniECommerce.Application.DTOs;
 
 namespace MiniECommerce.Application.Features.Product;
 
-public class CreateProductDtoValidator : AbstractValidator<CreateProductDto>
+public class UpdateProductDtoValidator : AbstractValidator<UpdateProductDto>
 {
-    public CreateProductDtoValidator()
+    public UpdateProductDtoValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Product name is required.")
@@ -25,9 +22,7 @@ public class CreateProductDtoValidator : AbstractValidator<CreateProductDto>
             .GreaterThanOrEqualTo(0).WithMessage("Stock cannot be negative.");
 
         RuleFor(x => x.Category)
-           .NotEmpty().WithMessage("Category is required.")
-           .MaximumLength(50).WithMessage("Category cannot exceed 50 characters.");
-
+            .NotEmpty().WithMessage("Category is required.")
+            .MaximumLength(50).WithMessage("Category cannot exceed 50 characters.");
     }
 }
-//Ürün ekleme isteğini daha controller’a gelmeden doğrular

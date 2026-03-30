@@ -35,7 +35,7 @@ builder.Services.AddSwaggerGen(options =>
             new OpenApiSecuritySchemeReference("Bearer", document, null),
             new List<string>()
         }
-    });
+    }); //OLMAZSA OLMAZ KODUM
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>

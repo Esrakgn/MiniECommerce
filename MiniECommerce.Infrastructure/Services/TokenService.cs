@@ -10,6 +10,7 @@ namespace MiniECommerce.Infrastructure.Services;
 
 public class TokenService : ITokenService
 {
+    //appsettings.json dosyasından JWT ile ilgili bilgileri almak için IConfiguration arayüzünü kullanıyoruz.
     private readonly IConfiguration _configuration;
 
     public TokenService(IConfiguration configuration)
@@ -24,6 +25,7 @@ public class TokenService : ITokenService
         var audience = _configuration["Jwt:Audience"];
         var expiresInMinutes = Convert.ToDouble(_configuration["Jwt:ExpiresInMinutes"]);
 
+        //token oluştururken kullanacağımız claim'leri tanımlıyoruz. Claim'ler, token içinde taşınacak bilgileri temsil eder.
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),

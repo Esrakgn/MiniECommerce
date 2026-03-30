@@ -2,15 +2,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniECommerce.Application.DTOs;
 using MiniECommerce.Application.Interfaces;
+using System.Security.Claims;
 
 namespace MiniECommerce.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
+    //api endpointlerini tanıplayıp auth işlemlerini dışarı açıyor
 {
     private readonly IAuthService _authService;
-
+    // işi service veriyoz
     public AuthController(IAuthService authService)
     {
         _authService = authService;
@@ -38,9 +40,11 @@ public class AuthController : ControllerBase
     {
         return Ok(new
         {
-            userId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value,
-            email = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value,
-            role = User.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value
+            //tokendan gelen billgileri tutan nesne 
+            userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+            email = User.FindFirst(ClaimTypes.Email)?.Value,
+            role = User.FindFirst(ClaimTypes.Role)?.Value
+            // eğer claim yoksa hata vermez null döner
         });
     }
 }

@@ -10,4 +10,6 @@ namespace MiniECommerce.Domain.Common
         Admin =2,
     }
 }
-//enum ile seçenekleri sabitliyoruz
+//enum ile seçenekleri sabitliyoruz.
+//yanlış değer girilmesini engeller ve kodu okunabilir yapar.
+
