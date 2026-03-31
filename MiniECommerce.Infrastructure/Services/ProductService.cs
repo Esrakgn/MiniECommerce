@@ -3,6 +3,7 @@ using MiniECommerce.Application.DTOs;
 using MiniECommerce.Application.Interfaces;
 using MiniECommerce.Domain.Entities;
 using MiniECommerce.Infrastructure.Persistence;
+using MiniECommerce.Application.Exceptions;
 
 namespace MiniECommerce.Infrastructure.Services;
 
@@ -126,7 +127,7 @@ public class ProductService : IProductService
 
         if (product is null)
         {
-            throw new Exception("Product not found.");
+            throw new NotFoundException("Product not found.");
         }
 
         product.Name = request.Name;
@@ -145,7 +146,7 @@ public class ProductService : IProductService
 
         if (product is null)
         {
-            throw new Exception("Product not found.");
+            throw new NotFoundException("Product not found.");
         }
 
         _context.Products.Remove(product);

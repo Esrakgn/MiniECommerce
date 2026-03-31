@@ -9,8 +9,18 @@ using MiniECommerce.Application.Features.Product;
 using MiniECommerce.Application.Interfaces;
 using MiniECommerce.Infrastructure.Persistence;
 using MiniECommerce.Infrastructure.Services;
+using MiniECommerce.API.Middlewares;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
@@ -70,6 +80,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
