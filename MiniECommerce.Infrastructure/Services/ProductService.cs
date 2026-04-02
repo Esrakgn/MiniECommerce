@@ -4,6 +4,7 @@ using MiniECommerce.Application.Interfaces;
 using MiniECommerce.Domain.Entities;
 using MiniECommerce.Infrastructure.Persistence;
 using MiniECommerce.Application.Exceptions;
+using MiniECommerce.Domain.Common;
 
 namespace MiniECommerce.Infrastructure.Services;
 
@@ -17,23 +18,24 @@ public class ProductService : IProductService
     }
 
     public async Task<List<ProductDto>> GetAllAsync(
-    int pageNumber,
-    int pageSize,
-    string? category,
-    string? search,
-    string? sortBy,
-    decimal? minPrice,
-    decimal? maxPrice,
-    bool? inStock)
+     int pageNumber,
+     int pageSize,
+     ProductCategory? category,
+     string? search,
+     string? sortBy,
+     decimal? minPrice,
+     decimal? maxPrice,
+     bool? inStock)
 
     {
         var query = _context.Products.AsQueryable();
         //product tablosunu sorgulanabilir hale getiriyor, hemen veri çekmiyo
 
-        if (!string.IsNullOrWhiteSpace(category))//kategoriye ait ürünler 
+        if (category.HasValue)
         {
-            query = query.Where(x => x.Category == category);
+            query = query.Where(x => x.Category == category.Value);
         }
+
 
         if (!string.IsNullOrWhiteSpace(search))
         {

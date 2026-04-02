@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using MiniECommerce.Domain.Common;
 
 namespace MiniECommerce.Application.DTOs
 {
@@ -10,7 +11,7 @@ namespace MiniECommerce.Application.DTOs
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public int Stock {  get; set; }
-        public string Category { get; set; } = string.Empty;
+        public ProductCategory Category { get; set; }
     }
 }
 //yeni ürün eklerken dışarıdan alınacak veri, id backend kendi üretiyor.

@@ -3,7 +3,7 @@ using System.Text.Json;
 using MiniECommerce.Application.Exceptions;
 
 
-namespace MiniECommerce.API.Middlewares
+namespace MiniECommerce.API.Middlewares   
 {
     public class ExceptionMiddleware
     {

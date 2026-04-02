@@ -22,7 +22,7 @@ public class UpdateProductDtoValidator : AbstractValidator<UpdateProductDto>
             .GreaterThanOrEqualTo(0).WithMessage("Stock cannot be negative.");
 
         RuleFor(x => x.Category)
-            .NotEmpty().WithMessage("Category is required.")
-            .MaximumLength(50).WithMessage("Category cannot exceed 50 characters.");
+           .IsInEnum().WithMessage("Invalid category.");
+
     }
 }

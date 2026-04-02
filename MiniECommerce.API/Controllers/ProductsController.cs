@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniECommerce.Application.DTOs;
 using MiniECommerce.Application.Interfaces;
+using MiniECommerce.Domain.Common;
+
 
 namespace MiniECommerce.API.Controllers;
 
@@ -21,7 +23,7 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> GetAll(
     [FromQuery] int pageNumber = 1,
     [FromQuery] int pageSize = 10,
-    [FromQuery] string? category = null,
+    [FromQuery] ProductCategory? category = null,
     [FromQuery] string? search = null,
     [FromQuery] string? sortBy = null,
     [FromQuery] decimal? minPrice = null,
@@ -29,14 +31,15 @@ public class ProductsController : ControllerBase
     [FromQuery] bool? inStock = null)
     {
         var products = await _productService.GetAllAsync(
-            pageNumber,
-            pageSize,
-            category,
-            search,
-            sortBy,
-            minPrice,
-            maxPrice,
-            inStock);
+    pageNumber,
+    pageSize,
+    category,
+    search,
+    sortBy,
+    minPrice,
+    maxPrice,
+    inStock);
+
 
         return Ok(products);
     }

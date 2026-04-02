@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Text;
 using MiniECommerce.Application.DTOs;
 using MiniECommerce.Domain.Entities;
+using MiniECommerce.Domain.Common;
 
 namespace MiniECommerce.Application.Interfaces;
 
 public  interface IProductService
 {
     Task<List<ProductDto>> GetAllAsync(
-    int pageNumber,
-    int pageSize,
-    string? category,
-    string? search,
-    string? sortBy,
-    decimal? minPrice,
-    decimal? maxPrice,
-    bool? inStock);
+       int pageNumber,
+       int pageSize,
+       ProductCategory? category,
+       string? search,
+       string? sortBy,
+       decimal? minPrice,
+       decimal? maxPrice,
+       bool? inStock);
 
 
     //pagination
