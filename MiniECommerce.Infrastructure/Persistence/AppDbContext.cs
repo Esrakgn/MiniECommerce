@@ -19,6 +19,10 @@ public class AppDbContext : DbContext
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
     //tablo olarak hangi entitylerin oluşturulacağını belirtiyoruz.
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder) //modelbuilder: entitylerin nasıl tabloya dönüşeceğini kuran araç.
     {
         base.OnModelCreating(modelBuilder);
@@ -44,6 +48,28 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.ProductId) //
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Order>()
+           .HasOne(x => x.User)  //bir order bir usera ait olabilir
+           .WithMany() //user --> many order 
+           .HasForeignKey(x => x.UserId)
+           .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(x => x.Order)
+            .WithMany(x => x.Items)
+            .HasForeignKey(x => x.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(x => x.Product)//bir orderItem bir product a ait olabilir
+            .WithMany()
+            .HasForeignKey(x => x.ProductId)
+            .OnDelete(DeleteBehavior.Restrict); //bu ürüne bağlı order item varken ürün silinmez
+
     }
 }
 //EF Core’un veritabanıyla konuştuğu ana sınıftır.
+//Cart için cascade kabul edilir çünkü sepet geçiici cart silinince item'ların gitmesi sorun değil
+//Order için cascade kabul edilmez. restrick kullandık çünkü siparişler kalıcıdır,
+//bir sipariş silindiğinde ona bağlı order itemların da silinmesi istenmez. kayıt bozulmamamlı 
