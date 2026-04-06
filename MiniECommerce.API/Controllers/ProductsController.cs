@@ -61,6 +61,21 @@ public class ProductsController : ControllerBase
         return Ok(product);
     }
 
+    [HttpGet("categories")]
+    public IActionResult GetCategories()
+    {
+        var categories = Enum.GetValues<ProductCategory>()
+            .Select(x => new
+            {
+                value = (int)x,
+                name = x.ToString()
+            })
+            .ToList();
+
+        return Ok(categories);
+    }
+
+
     [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create(CreateProductDto request)
@@ -69,6 +84,7 @@ public class ProductsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = productId }, new { id = productId });
     }
 
+
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
@@ -76,6 +92,8 @@ public class ProductsController : ControllerBase
         await _productService.DeleteAsync(id);
         return NoContent();
     }
+
+
 
     [Authorize(Roles = "Admin")]
     [HttpPut("{id:guid}")]

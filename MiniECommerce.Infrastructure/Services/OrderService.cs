@@ -2,6 +2,7 @@
 using MiniECommerce.Application.DTOs;
 using MiniECommerce.Application.Exceptions;
 using MiniECommerce.Application.Interfaces;
+using MiniECommerce.Domain.Common;
 using MiniECommerce.Domain.Entities;
 using MiniECommerce.Infrastructure.Persistence;
 
@@ -30,14 +31,14 @@ public class OrderService : IOrderService
 
         if (!cart.Items.Any())
         {
-            throw new Exception("Cart is empty.");
+            throw new BadRequestException("Cart is empty.");
         }
 
         foreach (var item in cart.Items)
         {
             if (item.Quantity > item.Product.Stock)
             {
-                throw new Exception($"Not enough stock for product: {item.Product.Name}");
+                throw new BadRequestException($"Not enough stock for product: {item.Product.Name}");
             }
         }
 
@@ -46,7 +47,8 @@ public class OrderService : IOrderService
             Id = Guid.NewGuid(),
             UserId = userId,
             OrderDate = DateTime.UtcNow,
-            TotalAmount = cart.Items.Sum(x => x.Product.Price * x.Quantity)
+            TotalAmount = cart.Items.Sum(x => x.Product.Price * x.Quantity),
+            Status = OrderStatus.SiparisAlindi
         };
 
         foreach (var item in cart.Items)
@@ -87,6 +89,7 @@ public class OrderService : IOrderService
             UserId = order.UserId,
             OrderDate = order.OrderDate,
             TotalAmount = order.TotalAmount,
+            Status = order.Status,
             Items = orderItemsDto
         };
     }
@@ -108,6 +111,7 @@ public class OrderService : IOrderService
             UserId = order.UserId,
             OrderDate = order.OrderDate,
             TotalAmount = order.TotalAmount,
+            Status = order.Status,
             Items = order.Items.Select(item => new OrderItemDto
             {
                 OrderItemId = item.Id,
@@ -121,4 +125,31 @@ public class OrderService : IOrderService
     }
 
     // GetMyOrdersAsync, kullanıcının geçmiş siparişlerini getirir.
+
+    public async Task CancelOrderAsync(Guid userId, Guid orderId)
+    {
+        var order = await _context.Orders
+            .Include(x => x.Items)
+            .ThenInclude(x => x.Product)
+            .FirstOrDefaultAsync(x => x.Id == orderId && x.UserId == userId);
+
+        if (order is null)
+        {
+            throw new NotFoundException("Order not found.");
+        }
+
+        if (order.Status == OrderStatus.IptalEdildi)
+        {
+            throw new BadRequestException("Order is already cancelled.");
+        }
+
+        foreach (var item in order.Items)
+        {
+            item.Product.Stock += item.Quantity;
+        }
+
+        order.Status = OrderStatus.IptalEdildi;
+
+        await _context.SaveChangesAsync();
+    }
 }

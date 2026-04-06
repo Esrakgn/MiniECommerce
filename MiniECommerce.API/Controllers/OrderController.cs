@@ -17,8 +17,6 @@ public class OrderController : ControllerBase
         _orderService = orderService;
     }
 
-
-
     [HttpPost("checkout")]
     public async Task<IActionResult> Checkout()
     {
@@ -27,8 +25,6 @@ public class OrderController : ControllerBase
         return Ok(order);
     }
     //kullanıcının mevcut cart’ından sipariş oluşturmak
-
-
 
     [HttpGet]
     public async Task<IActionResult> GetMyOrders()
@@ -40,6 +36,14 @@ public class OrderController : ControllerBase
     //giriş yapmış kullanıcının tüm siparişlerini getirmek
 
 
+    [HttpPut("{orderId:guid}/cancel")]
+    public async Task<IActionResult> CancelOrder(Guid orderId)
+    {
+        var userId = GetUserId();
+        await _orderService.CancelOrderAsync(userId, orderId);
+        return NoContent();
+    }
+    //giriş yapan kullanıcının kendi siparişini iptal etmesi
 
     private Guid GetUserId()
     {

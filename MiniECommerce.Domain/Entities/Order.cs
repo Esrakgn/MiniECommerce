@@ -12,6 +12,7 @@ namespace MiniECommerce.Domain.Entities
 
         public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }
+        public OrderStatus Status { get; set; }
 
         public List<OrderItem> Items { get; set; } = new();//bir siparişin birden fazla ürünü olabilir
     }

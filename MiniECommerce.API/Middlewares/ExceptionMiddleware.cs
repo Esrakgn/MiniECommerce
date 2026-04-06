@@ -2,8 +2,7 @@
 using System.Text.Json;
 using MiniECommerce.Application.Exceptions;
 
-
-namespace MiniECommerce.API.Middlewares   
+namespace MiniECommerce.API.Middlewares
 {
     public class ExceptionMiddleware
     {
@@ -22,8 +21,6 @@ namespace MiniECommerce.API.Middlewares
             {
                 await _next(context); //request’i normal akışa bırakıyor
             }
-
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled exception occurred."); // bu satır log basar 
@@ -33,15 +30,17 @@ namespace MiniECommerce.API.Middlewares
                 var statusCode = ex switch
                 {
                     NotFoundException => (int)HttpStatusCode.NotFound, //ec türüne bakıp ona göre hata döner 
+                    BadRequestException => (int)HttpStatusCode.BadRequest,
                     _ => (int)HttpStatusCode.InternalServerError //varsayılan 500 hatası döner
                 };
 
                 var message = ex switch
                 {
                     NotFoundException => ex.Message,
+                    BadRequestException => ex.Message,
                     _ => "An unexpected error occurred. Please try again later."
                 };
-                //hata 404 ise exception mesajını döner, diğer durumlarda genel bir hata mesajı döner
+                //hata 404 veya 400 ise exception mesajını döner, diğer durumlarda genel bir hata mesajı döner
 
                 context.Response.StatusCode = statusCode;
 
@@ -54,7 +53,6 @@ namespace MiniECommerce.API.Middlewares
                 var json = JsonSerializer.Serialize(response);
                 await context.Response.WriteAsync(json);
             }
-
         }
     }
 }

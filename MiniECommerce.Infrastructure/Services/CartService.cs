@@ -18,21 +18,22 @@ namespace MiniECommerce.Infrastructure.Services
 
         public async Task AddToCartAsync(Guid userId, AddToCartDto request) //productıd ve quantity alıyoruz 
         {
-           
-            
             if (request.Quantity <= 0)
             {
-                throw new Exception("Quantity must be greater than zero.");
+                throw new BadRequestException("Quantity must be greater than zero.");
             }
 
-
-
             var product = await _context.Products
-                .FirstOrDefaultAsync(x => x.Id == request.ProductId);// ürün varsa eklenir kosa null
+                .FirstOrDefaultAsync(x => x.Id == request.ProductId);// ürün varsa eklenir yoksa null
 
             if (product is null)
             {
                 throw new NotFoundException("Product not found.");
+            }
+
+            if (product.Stock <= 0) //stok kontrolü yapıyoruz ürünün stok miktarı sıfır veya sıfırdan küçükse eklenemez
+            {
+                throw new BadRequestException("This product is out of stock.");
             }
 
             //kullanıcının kartını buluyoruz
@@ -52,10 +53,21 @@ namespace MiniECommerce.Infrastructure.Services
                 _context.Carts.Add(cart);
             }
 
-
             //aynı ürün sepette varsa quantity güncellenir yoksa yeni bir item eklenir
             var existingItem = cart.Items
                 .FirstOrDefault(x => x.ProductId == request.ProductId);
+
+            var totalRequestedQuantity = request.Quantity;
+
+            if (existingItem is not null)
+            {
+                totalRequestedQuantity += existingItem.Quantity;
+            }
+
+            if (totalRequestedQuantity > product.Stock)
+            {
+                throw new BadRequestException("There is not enough stock for this product.");
+            }
 
             if (existingItem is not null)
             {
@@ -74,15 +86,9 @@ namespace MiniECommerce.Infrastructure.Services
                 _context.CartItems.Add(cartItem);
             }
 
-
-
             await _context.SaveChangesAsync();
         }
         //belli bir kullanıcı için sepet oluşturma ve ürün ekleme işlemi
-
-
-
-
 
         public async Task<CartDto> GetCartAsync(Guid userId)
         {
@@ -112,7 +118,6 @@ namespace MiniECommerce.Infrastructure.Services
                 TotalPrice = x.Product.Price * x.Quantity
             }).ToList();
 
-
             //
             return new CartDto
             {
@@ -125,11 +130,9 @@ namespace MiniECommerce.Infrastructure.Services
 
         // kullanıcının sepet bilgilerini alma işlemi
 
-
-
         public async Task RemoveFromCartAsync(Guid userId, Guid cartItemId)
         { //Burada urün yerine cartItemId alıyoruz çünkü sepet içindeki satırın kendi kimliği var 
-          
+
             var cart = await _context.Carts
                 .Include(x => x.Items)// sepet içeriği yüklensin ki içinde arama yapabilelim 
                 .FirstOrDefaultAsync(x => x.UserId == userId);
@@ -152,8 +155,6 @@ namespace MiniECommerce.Infrastructure.Services
 
         // kullanıcının sepetinden belirli bir ürünü kaldırma işlemi
 
-
-
         public async Task ClearCartAsync(Guid userId)
         {
             var cart = await _context.Carts
@@ -173,8 +174,6 @@ namespace MiniECommerce.Infrastructure.Services
     }
 }
 
-
-
 /*
  GETCART işlemi için yapılacaklar:
 kullanıcıya ait cart’ı bul
@@ -183,6 +182,4 @@ cart yoksa boş sepet dön
 cart varsa item’ları response formatına dönüştür
 toplam tutarı hesapla
 CartDto olarak dön
-
- 
  */
