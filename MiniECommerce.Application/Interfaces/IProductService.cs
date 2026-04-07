@@ -9,7 +9,7 @@ namespace MiniECommerce.Application.Interfaces;
 
 public  interface IProductService
 {
-    Task<List<ProductDto>> GetAllAsync(
+    Task<PagedResultDto<ProductDto>> GetAllAsync(
        int pageNumber,
        int pageSize,
        ProductCategory? category,

@@ -9,6 +9,7 @@ namespace MiniECommerce.Application.Interfaces
     {
         Task AddToCartAsync(Guid userId, AddToCartDto request);
         Task<CartDto> GetCartAsync(Guid userId);
+        Task UpdateCartItemQuantityAsync(Guid userId, Guid cartItemId, UpdateCartItemQuantityDto request);
         Task RemoveFromCartAsync(Guid userId, Guid cartItemId);
         Task ClearCartAsync(Guid userId);
 

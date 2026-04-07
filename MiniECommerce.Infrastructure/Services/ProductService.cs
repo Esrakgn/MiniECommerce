@@ -17,7 +17,7 @@ public class ProductService : IProductService
         _context = context;
     }
 
-    public async Task<List<ProductDto>> GetAllAsync(
+    public async Task<PagedResultDto<ProductDto>> GetAllAsync(
      int pageNumber,
      int pageSize,
      ProductCategory? category,
@@ -28,6 +28,16 @@ public class ProductService : IProductService
      bool? inStock)
 
     {
+        if (pageNumber < 1)
+        {
+            pageNumber = 1;
+        }
+
+        if (pageSize < 1)
+        {
+            pageSize = 10;
+        }
+
         var query = _context.Products.AsQueryable();
         //product tablosunu sorgulanabilir hale getiriyor, hemen veri çekmiyo
 
@@ -71,7 +81,9 @@ public class ProductService : IProductService
             _ => query.OrderBy(x => x.Name) //varsa
         };
 
-        return await query
+        var totalCount = await query.CountAsync();
+
+        var items = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .Select(x => new ProductDto
@@ -81,9 +93,23 @@ public class ProductService : IProductService
                 Description = x.Description,
                 Price = x.Price,
                 Stock = x.Stock,
-                Category = x.Category
+                Category = x.Category,
+                 ImageUrl = x.ImageUrl
             })
             .ToListAsync();
+
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        return new PagedResultDto<ProductDto>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = totalPages,
+            HasPreviousPage = pageNumber > 1,
+            HasNextPage = pageNumber < totalPages
+        };
     }
 
 
@@ -99,7 +125,8 @@ public class ProductService : IProductService
                 Description = x.Description,
                 Price = x.Price,
                 Stock = x.Stock,
-                Category = x.Category
+                Category = x.Category,
+                 ImageUrl = x.ImageUrl
             })
             .FirstOrDefaultAsync();// ilk eşleşen ürünü döndür, yoksa null döndür
     }
@@ -113,7 +140,10 @@ public class ProductService : IProductService
             Description = request.Description,
             Price = request.Price,
             Stock = request.Stock,
-            Category = request.Category
+            Category = request.Category,
+            ImageUrl = request.ImageUrl
+            //ürün oluştururken gelen resmi dbye kaydediyoz
+
         };
 
         _context.Products.Add(product);
@@ -137,6 +167,9 @@ public class ProductService : IProductService
         product.Price = request.Price;
         product.Stock = request.Stock;
         product.Category = request.Category;
+        product.ImageUrl = request.ImageUrl;
+        //ürün güncellenince resim de güncellensin
+
 
         await _context.SaveChangesAsync();
     }

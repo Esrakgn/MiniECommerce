@@ -13,5 +13,7 @@ public class ProductDto
     public decimal Price { get; set; }
     public int Stock { get; set; }
     public ProductCategory Category { get; set; }
+    public string ImageUrl { get; set; } = string.Empty;
+    //ürünü dışarıya dönerken resmi de göndercemiz için ekliyoruz
 }
 // Ürünü dışarıya dönerken kullandığımız güvenli şekil.

@@ -40,6 +40,9 @@ const request = async (path, options = {}, fallbackMessage = 'Request failed.') 
 export const getProducts = async (queryString) =>
   request(`/api/products?${queryString}`, {}, 'Products could not be loaded.')
 
+export const getProductById = async (productId) =>
+  request(`/api/products/${productId}`, {}, 'Product details could not be loaded.')
+
 export const getCategories = async () =>
   request('/api/products/categories', {}, 'Categories could not be loaded.')
 
@@ -98,6 +101,35 @@ export const getOrders = async (headers) =>
     'Orders could not be loaded.',
   )
 
+export const getFavorites = async (headers) =>
+  request(
+    '/api/favorites',
+    {
+      headers,
+    },
+    'Favorites could not be loaded.',
+  )
+
+export const addFavoriteRequest = async (productId, headers) =>
+  request(
+    `/api/favorites/${productId}`,
+    {
+      method: 'POST',
+      headers,
+    },
+    'Product could not be added to favorites.',
+  )
+
+export const removeFavoriteRequest = async (productId, headers) =>
+  request(
+    `/api/favorites/${productId}`,
+    {
+      method: 'DELETE',
+      headers,
+    },
+    'Product could not be removed from favorites.',
+  )
+
 export const addToCart = async (headers, payload) =>
   request(
     '/api/cart/items',
@@ -107,6 +139,17 @@ export const addToCart = async (headers, payload) =>
       body: JSON.stringify(payload),
     },
     'Product could not be added to cart.',
+  )
+
+export const updateCartItemQuantity = async (cartItemId, headers, payload) =>
+  request(
+    `/api/cart/items/${cartItemId}`,
+    {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(payload),
+    },
+    'Cart item quantity could not be updated.',
   )
 
 export const createProduct = async (headers, payload) =>

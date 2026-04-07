@@ -30,7 +30,8 @@ public class ProductsController : ControllerBase
     [FromQuery] decimal? maxPrice = null,
     [FromQuery] bool? inStock = null)
     {
-        var products = await _productService.GetAllAsync(
+
+    var products = await _productService.GetAllAsync(
     pageNumber,
     pageSize,
     category,

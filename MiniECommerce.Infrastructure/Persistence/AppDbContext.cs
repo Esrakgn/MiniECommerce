@@ -21,6 +21,8 @@ public class AppDbContext : DbContext
     //tablo olarak hangi entitylerin oluşturulacağını belirtiyoruz.
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Favorite> Favorites { get; set; }
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) //modelbuilder: entitylerin nasıl tabloya dönüşeceğini kuran araç.
@@ -66,6 +68,25 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.ProductId)
             .OnDelete(DeleteBehavior.Restrict); //bu ürüne bağlı order item varken ürün silinmez
+
+        modelBuilder.Entity<Favorite>()
+           .HasIndex(x => new { x.UserId, x.ProductId })
+           .IsUnique();
+           //aynı kullanıcı aynı ürünü bir kere favorileyebilsin diye unique verdik
+
+        modelBuilder.Entity<Favorite>()
+            .HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Favorite>()
+            .HasOne(x => x.Product)
+            .WithMany()
+            .HasForeignKey(x => x.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+        //user ya da product silinirse ona bağlı favori kayıtları da temizlensin diye cascade verdik
+
 
     }
 }

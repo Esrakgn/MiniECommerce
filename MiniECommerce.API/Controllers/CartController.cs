@@ -43,6 +43,17 @@ public class CartController : ControllerBase
 
 
 
+    [HttpPut("items/{cartItemId:guid}")]
+    public async Task<IActionResult> UpdateCartItemQuantity(Guid cartItemId, UpdateCartItemQuantityDto request)
+    {
+        var userId = GetUserId();
+        await _cartService.UpdateCartItemQuantityAsync(userId, cartItemId, request);
+        return NoContent();
+    }
+    //sepetteki ürün miktarını günceller
+
+
+
 
     [HttpDelete("items/{cartItemId:guid}")]
     public async Task<IActionResult> RemoveFromCart(Guid cartItemId)

@@ -130,6 +130,46 @@ namespace MiniECommerce.Infrastructure.Services
 
         // kullanıcının sepet bilgilerini alma işlemi
 
+        public async Task UpdateCartItemQuantityAsync(Guid userId, Guid cartItemId, UpdateCartItemQuantityDto request)
+        {
+            if (request.Quantity <= 0)
+            {
+                throw new BadRequestException("Quantity must be greater than zero.");
+            }
+
+            var cart = await _context.Carts
+                .Include(x => x.Items)
+                .ThenInclude(x => x.Product)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (cart is null)
+            {
+                throw new NotFoundException("Cart not found.");
+            }
+
+            var cartItem = cart.Items.FirstOrDefault(x => x.Id == cartItemId);
+
+            if (cartItem is null)
+            {
+                throw new NotFoundException("Cart item not found.");
+            }
+
+            if (cartItem.Product is null)
+            {
+                throw new NotFoundException("Product not found.");
+            }
+
+            if (request.Quantity > cartItem.Product.Stock)
+            {
+                throw new BadRequestException("There is not enough stock for this product.");
+            }
+
+            cartItem.Quantity = request.Quantity;
+            await _context.SaveChangesAsync();
+        }
+
+        // kullanıcının sepetindeki ürün adedini güncelleme işlemi
+
         public async Task RemoveFromCartAsync(Guid userId, Guid cartItemId)
         { //Burada urün yerine cartItemId alıyoruz çünkü sepet içindeki satırın kendi kimliği var 
 
