@@ -4,41 +4,64 @@ MiniECommerce is a learning-focused backend project built with ASP.NET Core Web 
 
 It includes product CRUD operations, category support, search, filtering, sorting, pagination, centralized exception handling with custom status codes, and Serilog logging with console and file output.
 
-## Project Structure
-
-- `MiniECommerce.API`: controllers, middleware, JWT setup, Serilog, Swagger, and application startup
-- `MiniECommerce.Application`: DTOs, interfaces, validation rules, and custom exceptions
-- `MiniECommerce.Domain`: core entities and shared domain models
-- `MiniECommerce.Infrastructure`: EF Core database context and service implementations
-
 ## Technologies Used
 
+### Backend
 - ASP.NET Core Web API
 - Entity Framework Core
 - MSSQL
-- JWT Bearer Authentication
+- JWT Authentication
 - FluentValidation
 - Serilog
-- Swagger / OpenAPI
+- Middleware
+- Layered Architecture
 
-## Main Endpoints
+### Frontend
+- React
+- Vite
+- CSS
+- Fetch API
 
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `GET /api/auth/me`
-- `GET /api/products`
-- `GET /api/products/{id}`
-- `POST /api/products`
-- `PUT /api/products/{id}`
-- `DELETE /api/products/{id}`
+## Features
+- User registration and login
+- JWT-based authentication
+- Role-based authorization
+- Claims-based user identity handling
+- Product CRUD operations
+- Product search, filtering, and sorting
+- Pagination
+- Product detail page
+- Cart management
+- Order flow
+- Favorites feature
+- Product comparison feature
+- Product image support
+- Turkish / English language support
+- Validation system
+- Global exception handling
+- Logging support
+- Full frontend-backend integration
 
-The product listing endpoint supports category filtering, search by name and description, price range filtering, stock filtering, sorting, and pagination.
+## Screenshots
+<img width="1595" height="715" alt="image" src="https://github.com/user-attachments/assets/3458d5d8-32c6-48bf-b455-99e5f081c65d" />
+<img width="1593" height="745" alt="image" src="https://github.com/user-attachments/assets/af63298c-325c-4da4-a076-d4eaec4fa183" />
 
-## How to Run
 
+## Setup
+
+### Backend
 1. Clone the repository
-2. Open the solution in Visual Studio
-3. Update the SQL Server connection string in `appsettings.json` if needed
-4. Run EF Core migrations or update the database
-5. Start the `MiniECommerce.API` project
-6. Open Swagger and test the endpoints
+2. Update the MSSQL connection string in `appsettings.json`
+3. Apply migrations and update the database
+4. Run the backend project
+
+### Frontend
+1. Go to the `MiniECommerce.UI` folder
+2. Install dependencies
+3. Start the development server
+
+## Notes
+
+This project was created for learning and development purposes. Its main goal is to demonstrate how core backend concepts can be applied in a layered architecture and connected to a working frontend in a complete mini e-commerce scenario.
+
+
